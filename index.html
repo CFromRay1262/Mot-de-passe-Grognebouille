@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Village de Noël</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #0a0a1a, #000);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #login, #error, #scene, #loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    #login {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #ff2e63;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #e6004c;
+    }
+
+    #elfe, #elfe-langue {
+      width: 250px;
+      max-width: 80%;
+      margin-bottom: 15px;
+      border-radius: 16px;
+    }
+
+    #video-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #joyeuses {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4em;
+      color: #fff;
+      text-shadow: 0 0 20px gold, 0 0 40px red;
+      opacity: 0;
+      animation: fadeIn 3s ease forwards;
+      animation-delay: 5s;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    #rejouer {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #2563eb;
+      color: white;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeIn 3s ease forwards;
+      animation-delay: 7s;
+    }
+
+    #rejouer:hover {
+      background-color: #1d4ed8;
+    }
+
+    #loading {
+      font-size: 1.5em;
+      color: #ffeb3b;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Bloc mot de passe -->
+  <div id="login">
+    <img id="elfe" src="personnage.png" alt="Personnage de Noël">
+    <h2>Entrez le mot de passe pour illuminer le village 🎄</h2>
+    <input type="password" id="password" placeholder="Mot de passe">
+    <button onclick="verifier()">Valider</button>
+    <p id="message"></p>
+  </div>
+
+  <!-- Bloc erreur -->
+  <div id="error">
+    <img id="elfe-langue" src="personnage_langue.png" alt="Erreur">
+    <p>Oups 😝 Mauvais mot de passe ! Réessaie.</p>
+    <button onclick="retour()">Réessayer</button>
+  </div>
+
+  <!-- Bloc chargement -->
+  <div id="loading">
+    Chargement des lumières de Noël... ✨
+  </div>
+
+  <!-- Bloc scène -->
+  <div id="scene">
+    <div id="video-container">
+      <video id="video" src="PixVerse_Noel.mp4" preload="auto" playsinline></video>
+      <div id="joyeuses">JOYEUSES FÊTES ✨</div>
+      <button id="rejouer" onclick="rejouer()">Rejouer</button>
+    </div>
+    <audio id="musique" src="musique.mp3" loop></audio>
+  </div>
+
+  <script>
+    const correctPassword = "lumieres de noel";
+
+    function normaliser(texte) {
+      return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    }
+
+    function verifier() {
+      const input = document.getElementById("password").value;
+      if (normaliser(input) === correctPassword) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("loading").style.display = "flex";
+        setTimeout(lancerScene, 2000);
+      } else {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("error").style.display = "flex";
+      }
+    }
+
+    function retour() {
+      document.getElementById("error").style.display = "none";
+      document.getElementById("login").style.display = "flex";
+      document.getElementById("password").value = "";
+    }
+
+    function lancerScene() {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("scene").style.display = "block";
+
+      const video = document.getElementById("video");
+      const musique = document.getElementById("musique");
+
+      // Lancement vidéo + son
+      video.currentTime = 0;
+      video.play().catch(() => console.warn("La lecture automatique est bloquée."));
+      musique.play().catch(() => {
+        alert("Cliquez sur OK pour autoriser la musique 🎵");
+        musique.play();
+      });
+    }
+
+    function rejouer() {
+      const video = document.getElementById("video");
+      video.currentTime = 0;
+      video.play();
+    }
+  </script>
+</body>
+</html>
